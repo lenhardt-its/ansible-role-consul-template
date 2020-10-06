@@ -1,0 +1,226 @@
+---
+- name: gather operating system variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution_file_variety | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}-{{ ansible_distribution_version.split('.')[0] }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+
+- name: assert usage of systemd as an init system
+  assert:
+    that: ansible_service_mgr == 'systemd'
+    msg: "This module only works with systemd"
+  become: true
+  tags: consul_template
+
+- name: get systemd version
+  command: systemctl --version
+  changed_when: false
+  check_mode: false
+  register: __systemd_version
+  become: true
+  tags: consul_template
+
+- name: set systemd version fact
+  set_fact:
+    consul_template_systemd_version: "{{ __systemd_version.stdout_lines[0].split(' ')[-1] }}"
+  become: true
+  tags: consul_template
+
+- name: create system group
+  group:
+    name: "{{ consul_template_system_group }}"
+    system: true
+    state: present
+  when: consul_template_system_group != "root"
+  become: true
+  tags: consul_template
+
+- name: create system user
+  user:
+    name: "{{ consul_template_system_user }}"
+    system: true
+    shell: "/sbin/nologin"
+    group: "{{ consul_template_system_group }}"
+    createhome: false
+  when: consul_template_system_user != "root"
+  become: true
+  tags: consul_template
+
+- name: create configuration and data directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ consul_template_system_user }}"
+    group: "{{ consul_template_system_group }}"
+    mode: 0755
+  with_items:
+    - "{{ consul_template_config_dir }}"
+    - "{{ consul_template_template_dir }}"
+    - "{{ consul_template_output_dir }}"
+  become: true
+  tags: consul_template
+
+- name: check if consul_template is installed
+  stat:
+    path: "{{ consul_template_binary_install_dir }}/consul-template"
+  register: __consul_template_is_installed
+  become: true
+  tags: consul_template
+
+- name: gather currently installed consul-template version
+  command: "{{ consul_template_binary_install_dir }}/consul-template -version"
+  args:
+    warn: false
+  changed_when: false
+  register: __consul_template_current_version_output
+  when: __consul_template_is_installed.stat.exists
+  become: true
+  tags: consul_template
+
+- block:
+  - name: get checksum list from github
+    set_fact:
+      _checksums: "{{ lookup('url', 'https://releases.hashicorp.com/consul-template/' + consul_template_version + '/consul-template_' + consul_template_version + '_SHA256SUMS', wantlist=True) | list }}"
+    environment: "{{ proxy_env }}"
+    run_once: true
+    become: true
+    tags: consul_template
+
+  - name: "get checksum for {{ go_arch }} architecture"
+    set_fact:
+      consul_template_checksum: "{{ item.split(' ')[0] }}"
+    with_items: "{{ _checksums }}"
+    when: "('consul-template_0.25.1_linux_' + go_arch + '.tgz') in item"
+    become: true
+    tags: consul_template
+
+  - name: download binary to local folder
+    get_url:
+      url: "https://releases.hashicorp.com/consul-template/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_{{ go_arch }}.tgz"
+      dest: "/tmp/consul_template-{{ consul_template_version }}.linux-{{ go_arch }}.tar.gz"
+      checksum: "sha256:{{ consul_template_checksum }}"
+    environment: "{{ proxy_env }}"
+    register: _download_archive
+    until: _download_archive is succeeded
+    retries: 5
+    delay: 2
+    delegate_to: localhost
+    check_mode: false
+    become: true
+    tags: consul_template
+
+  - name: unpack binaries
+    unarchive:
+      src: "/tmp/consul_template-{{ consul_template_version }}.linux-{{ go_arch }}.tar.gz"
+      dest: "/tmp"
+    delegate_to: localhost
+    check_mode: false
+    become: true
+    tags: consul_template
+
+  - name: propagate console-templates
+    copy:
+      src: "/tmp/{{ item }}"
+      dest: "{{ consul_template_binary_install_dir }}/{{ item }}"
+      mode: 0755
+      owner: "root"
+      group: "root"
+    with_items:
+      - consul-template
+    notify: restart consul_template
+    become: true
+    tags: consul_template
+  when: (not __consul_template_is_installed.stat.exists) or (__consul_template_current_version_output.stderr_lines[0].split(" ")[1]|regex_search('[0-9.]+') != consul_template_version)
+
+- name: configure consul-template
+  template:
+    src: "consul-template.config.hcl.j2"
+    dest: "{{ consul_template_config_dir }}/{{ consul_template_config_file }}"
+    owner: "{{ consul_template_system_user }}"
+    group: "{{ consul_template_system_group }}"
+    mode: 0644
+  notify: restart consul_template
+  become: true
+  tags: consul_template
+
+- name: configure consul-template prometheus file_sd
+  template:
+    src: consul-template.prometheus_file_sd.j2
+    dest: "{{ item.source }}"
+    owner: "{{ consul_template_system_user }}"
+    group: "{{ consul_template_system_group }}"
+    mode: 0644
+  with_items: "{{ consul_template_templates_config }}"
+  notify: restart consul_template
+  become: true
+  tags: consul_template
+
+- name: create systemd service unit
+  template:
+    src: consul-template.service.j2
+    dest: /etc/systemd/system/consul-template.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart consul_template
+  become: true
+  tags: consul_template
+
+- name: install selinux dependencies
+  package:
+    name: "{{ item }}"
+    state: present
+  environment: "{{ proxy_env }}"
+  with_items: "{{ consul_template_selinux_packages }}"
+  register: _install_packages
+  until: _install_packages is succeeded
+  retries: 5
+  delay: 2
+  when:
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+  become: true
+  tags: consul_template
+
+- name: allow binding to port in selinux
+  seport:
+    ports: "{{ consul_template_web_listen_port }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when:
+    - _install_packages['changed']
+  become: true
+  tags: consul_template
+
+- name: allow access to port on firewalld
+  firewalld:
+    port: "{{ consul_template_web_listen_port }}/tcp"
+    permanent: yes
+    state: true
+  when: consul_template_firewalld_state == "enabled"
+  register: "_firewalld_consul_template_state"
+  become: true
+  tags: consul_template
+
+- name: reload firewalld service
+  service:
+    name: firewalld
+    state: reloaded
+  when: _firewalld_consul_template_state['changed']
+  become: true
+  tags: consul_template
+
+- name: ensure consul_template service is started and enabled
+  systemd:
+    daemon_reload: true
+    name: consul-template
+    state: started
+    enabled: true
+  become: true
+  tags: consul_template

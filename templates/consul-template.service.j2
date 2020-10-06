@@ -1,0 +1,20 @@
+{{ ansible_managed | comment }}
+[Unit]
+Description=Consul Template
+Documentation=https://github.com/hashicorp/consul-template
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+Type=simple
+User={{ consul_template_system_user }}
+Group={{ consul_template_system_group }}
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart={{ consul_template_binary_install_dir }}/consul-template -config {{ consul_template_config_dir }}/{{ consul_template_config_file }}
+KillSignal=SIGINT
+SyslogIdentifier=consul-template
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

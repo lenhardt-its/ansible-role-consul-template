@@ -1,0 +1,81 @@
+---
+proxy_env: {}
+consul_template_version: 0.25.1
+consul_template_config_dir: /etc/consul_template
+consul_template_template_dir: "{{ consul_template_config_dir }}/templates"
+consul_template_output_dir: "/etc/prometheus/file_sd"
+consul_template_config_file: config.hcl
+consul_template_firewalld_state: "disabled"
+consul_template_binary_install_dir: "/usr/local/bin"
+# Run consul-template as prometheus user to write output to prometheus file_sd folder
+consul_template_system_user: "{{ consul_template_user | default('prometheus') }}"
+consul_template_system_group: "{{ consul_template_group | default('prometheus') }}"
+consul_template_web_listen_port: 8888
+
+consul_template_config_consul: {}
+#  auth:
+#    enabled: false
+#    username: "consul"
+#    password: "consul"
+#  address: "consul.service.consul:8500"
+#  token: "xxx"
+#  retry:
+#    enabled: true
+#    attempts: 12
+#    backoff: "250ms"
+#    max_backoff: "1m"
+#  ssl:
+#    enabled: false
+#    verify: false
+#    cert: "/path/to/cert"
+#    key: "/path/to/key"
+#    ca_cert: "/path/to/ca"
+#    ca_path: "/path/to/certs/"
+#    server_name: "consul.service.consul"
+
+consul_template_config_vault: {}
+
+consul_template_config_default: {}
+#  max_stale: "10m"
+#  block_query_wait: "60s"
+#  log_level: "warn"
+#  pid_file: '/var/run/consul-template.pid'
+#  reload_signal: 'SIGHUP'
+#  kill_signal: 'SIGINT'
+
+consul_template_config_wait: {}
+#  min: "5s"
+#  max: "10s"
+
+consul_template_config_deduplicate: {}
+#  enabled: true
+#  prefix: "consul-template/dedup"
+
+consul_template_config_telemetry: {}
+#  stdout:
+#    reporting_interval: '60s'
+#    pretty_print: false
+#    do_not_print_time: false
+#  prometheus:
+#    reporting_interval: '60s'
+#    port: "{{ consul_template_web_listen_port }}"
+
+consul_template_config_exec: {}
+
+consul_template_config_syslog: {}
+#  enabled: true
+#  facility: 'LOCAL5'
+
+consul_template_templates_config: {}
+#  - monitoring-node-exporter:
+#    source: "{{ consul_template_template_dir }}/node_exporter.ctmpl"
+#    destination: "{{ consul_template_output_dir }}/node_exporter.json"
+#    create_dest_dirs: true
+#    command_timeout: "60s"
+#    error_on_missing_key: false
+#  - monitoring-prometheus:
+#    source: "{{ consul_template_template_dir }}/prometheus.ctmpl"
+#    destination: "{{ consul_template_output_dir }}/prometheus.json"
+#    create_dest_dirs: true
+#    command_timeout: "60s"
+#    error_on_missing_key: false

@@ -1,0 +1,4 @@
+---
+consul_template_selinux_packages:
+  - libselinux-python
+  - policycoreutils-python

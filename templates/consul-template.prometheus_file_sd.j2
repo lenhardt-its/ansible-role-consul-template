@@ -1,0 +1,23 @@
+{% raw %}
+[
+{{- range $index, $service := service "{% endraw %}{{ item| first }}{% raw %}" "any" }}
+{{- if gt $index 0}},{{ end }}
+  {
+    "targets": ["{{.Address}}:{{.Port}}"],
+    "labels": {
+      {{- range $key, $value := .ServiceMeta }}
+      "{{ $key}}": "{{ $value }}",
+      {{- end }}
+      {{- with node}}
+      {{-   range $key, $value := .Node.Meta }}
+      {{-     if ne $key "consul-network-segment" }}
+      "{{ $key}}": "{{ $value }}",
+      {{-     end }}
+      {{-   end }}
+      {{- end }}
+      "job": "{{.Name| replaceAll "monitoring-" "" }}"
+    }
+  }
+{{- end}}
+]
+{% endraw %}

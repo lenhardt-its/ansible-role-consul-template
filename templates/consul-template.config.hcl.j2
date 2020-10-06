@@ -1,0 +1,245 @@
+{{ ansible_managed | comment }}
+{% if consul_template_config_default | length > 0 %}
+# Basic configuration
+{%   for option, value in consul_template_config_default.items() %}
+{%     if value is sameas true %}
+{{ option }} = true
+{%     elif value is sameas false %}
+{{ option }} = false
+{%     elif value is string %}
+{{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+{{ option }} = {{ value|int }}
+{%     endif %}
+{%   endfor %}
+{% endif %}
+{% if consul_template_config_consul | length > 0 %}
+# Consul configuration
+consul {
+{% for option, value in consul_template_config_consul.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_config_vault | length > 0 %}
+# Vault configuration
+vault {
+{% for option, value in consul_template_config_vault.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_config_wait | length > 0 %}
+# Wait configuration
+wait {
+{% for option, value in consul_template_config_wait.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_config_deduplicate | length > 0 %}
+# Deduplicate configuration
+deduplicate {
+{% for option, value in consul_template_config_deduplicate.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_config_telemetry | length > 0 %}
+# Telemetry configuration
+telemetry {
+{% for option, value in consul_template_config_telemetry.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_config_syslog | length > 0 %}
+# Syslog configuration
+syslog {
+{% for option, value in consul_template_config_syslog.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_config_exec | length > 0 %}
+# Exec configuration
+exec {
+{% for option, value in consul_template_config_exec.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     elif value is mapping %}
+  {{ option }} {
+{%      for suboption, subvalue in value.items() %}
+{%        if subvalue is sameas true %}
+    {{ suboption }} = true
+{%        elif subvalue is sameas false %}
+    {{ suboption }} = false
+{%        elif subvalue is string %}
+    {{ suboption }} = "{{ subvalue|string }}"
+{%        elif subvalue is number %}
+    {{ suboption }} = {{ subvalue|int }}
+{%        endif %}
+{%      endfor %}
+  }
+{%     endif %}
+{%   endfor %}
+}
+{% endif %}
+{% if consul_template_templates_config | length > 0 %}
+# Template configuration
+{% for ctmpl in consul_template_templates_config %}
+# {{ ctmpl | first }}
+template {
+{% for option, value in ctmpl.items() %}
+{%     if value is sameas true %}
+  {{ option }} = true
+{%     elif value is sameas false %}
+  {{ option }} = false
+{%     elif value is string %}
+  {{ option }} = "{{ value|string }}"
+{%     elif value is number %}
+  {{ option }} = {{ value|int }}
+{%     endif %}
+{%   endfor %}
+}
+
+{% endfor %}
+{% endif %}
