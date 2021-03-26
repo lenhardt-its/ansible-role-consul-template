@@ -5,8 +5,13 @@
   {
     "targets": ["{{.Address}}:{{.Port}}"],
     "labels": {
+      "hostname" : "{{.Address}}",
+      "port" : "{{.Port}}",
       {{- range $key, $value := .ServiceMeta }}
       "{{ $key}}": "{{ $value }}",
+      {{- end }}
+      {{- if not .NodeMeta.product}}
+      "product": "NotDefined",
       {{- end }}
       {{- with node}}
       {{-   range $key, $value := .Node.Meta }}

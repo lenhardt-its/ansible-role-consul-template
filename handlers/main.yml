@@ -2,7 +2,14 @@
 - name: restart consul_template
   systemd:
     daemon_reload: true
-    name: consul-template
+    name: consul_template
     state: restarted
+  become: true
+  tags: consul_template
+
+- name: restart consul_template
+  systemd:
+    name: consul_template
+    state: reloaded
   become: true
   tags: consul_template
