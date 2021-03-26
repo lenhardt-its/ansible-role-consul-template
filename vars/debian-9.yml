@@ -1,2 +1,2 @@
 ---
-prometheus_selinux_packages: []
+consul_template_selinux_packages: []
