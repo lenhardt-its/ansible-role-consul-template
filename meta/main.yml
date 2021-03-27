@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: consul-template
+  role_name: consul_template
   author: Dominik Lenhardt
   description: Installing and configure Consul-Template
   license: "MIT"

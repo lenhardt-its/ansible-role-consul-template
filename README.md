@@ -61,7 +61,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 ---
 - hosts: all
   roles:
-  - onkeldom.consul-template
+  - onkeldom.consul_template
 ```
 
 ## Contributing
