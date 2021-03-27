@@ -40,8 +40,8 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `consul_template_config_file` | config.hcl | Config file name |
 | `consul_template_allow_firewall` | false | Allow access on firewalld port |
 | `consul_template_binary_install_dir` | "/usr/local/bin" | Base binary path |
-| `consul_template_system_user` | "{{ consul_template_user | default('consul') }}" | User for Consul Template |
-| `consul_template_system_group` | "{{ consul_template_group | default('consul') }}" | Group for Consul Template |
+| `consul_template_system_user` | consul | User for Consul Template |
+| `consul_template_system_group` | prometheus | Group for Consul Template |
 | `consul_template_web_listen_port` | 8888 | Prometheus metrics listen Port |
 | `consul_template_config_consul` | {} | Configure consul entpoint |
 | `consul_template_config_vault` | {} | Configure vault entpoint |
