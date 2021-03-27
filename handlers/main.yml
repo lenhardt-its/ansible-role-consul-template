@@ -13,3 +13,17 @@
     state: reloaded
   become: true
   tags: consul_template
+
+- name: reload ufw
+  systemd:
+    name: ufw
+    state: reloaded
+  tags: consul_template
+  become: true
+
+- name: reload firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+  tags: consul_template
+  become: true
