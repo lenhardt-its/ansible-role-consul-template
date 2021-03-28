@@ -95,7 +95,7 @@
     set_fact:
       consul_template_checksum: "{{ item.split(' ')[0] }}"
     with_items: "{{ _checksums }}"
-    when: "('consul-template_0.25.1_linux_' + go_arch + '.tgz') in item"
+    when: "('consul-template_' + consul_template_version + '_linux_' + go_arch + '.tgz') in item"
     become: true
     tags: consul_template
 
