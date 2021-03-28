@@ -233,7 +233,9 @@
     port: "{{ consul_template_web_listen_port }}"
     proto: tcp
     state: enabled
-    comment: "consul_template"
+    comment: "Consul Template"
+  changed_when: False
+  ignore_errors: True
   notify: reload ufw
   become: true
   tags: consul_template
@@ -247,6 +249,8 @@
     port: "{{ consul_template_web_listen_port }}/tcp"
     permanent: yes
     state: true
+  changed_when: False
+  ignore_errors: True
   when:
     - "'running' in _firewalld_status.stdout"
     - consul_template_allow_firewall
