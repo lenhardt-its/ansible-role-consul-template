@@ -262,7 +262,7 @@
 - name: ensure consul_template service is started and enabled
   systemd:
     daemon_reload: true
-    name: consul-template
+    name: consul_template
     state: started
     enabled: true
   become: true
