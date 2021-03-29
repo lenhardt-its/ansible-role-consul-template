@@ -135,7 +135,7 @@
     notify: restart consul_template
     become: true
     tags: consul_template
-  when: (not __consul_template_is_installed.stat.exists) or (__consul_template_current_version_output.stderr_lines[0].split(" ")[1]|regex_search('[0-9.]+') != consul_template_version)
+  when: (not __consul_template_is_installed.stat.exists) or (__consul_template_current_version_output.stdout.split(" ")[1]|regex_search('[0-9.]+') != consul_template_version)
 
 - name: configure consul-template
   template:
