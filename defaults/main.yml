@@ -8,7 +8,7 @@ consul_template_config_file: config.hcl
 consul_template_allow_firewall: "disabled"
 consul_template_binary_install_dir: "/usr/local/bin"
 # Run consul-template as prometheus user to write output to prometheus file_sd folder
-consul_template_system_user: "{{ consul_template_user | default('consul') }}"
+consul_template_system_user: "{{ consul_template_user | default('prometheus') }}"
 consul_template_system_group: "{{ consul_template_group | default('prometheus') }}"
 consul_template_web_listen_port: 8888
 
@@ -38,8 +38,7 @@ consul_template_config_vault: {}
 consul_template_config_default: {}
 #  max_stale: "10m"
 #  block_query_wait: "60s"
-#  log_level: "warn"
-#  pid_file: '/var/run/consul-template.pid'
+#  log_level: "IFNO"
 #  reload_signal: 'SIGHUP'
 #  kill_signal: 'SIGINT'
 
