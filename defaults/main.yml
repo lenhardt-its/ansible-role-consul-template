@@ -5,7 +5,7 @@ consul_template_config_dir: /etc/consul_template
 consul_template_template_dir: "{{ consul_template_config_dir }}/templates"
 consul_template_output_dir: "/etc/prometheus/file_sd"
 consul_template_config_file: config.hcl
-consul_template_allow_firewall: "disabled"
+consul_template_allow_firewall: false
 consul_template_binary_install_dir: "/usr/local/bin"
 # Run consul-template as prometheus user to write output to prometheus file_sd folder
 consul_template_system_user: "{{ consul_template_user | default('prometheus') }}"
