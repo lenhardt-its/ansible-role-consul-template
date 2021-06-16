@@ -95,14 +95,14 @@
     set_fact:
       consul_template_checksum: "{{ item.split(' ')[0] }}"
     with_items: "{{ _checksums }}"
-    when: "('consul-template_' + consul_template_version + '_linux_' + go_arch + '.tgz') in item"
+    when: "('consul-template_' + consul_template_version + '_linux_' + go_arch + '.zip') in item"
     become: true
     tags: consul_template
 
   - name: download binary to local folder
     get_url:
-      url: "https://releases.hashicorp.com/consul-template/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_{{ go_arch }}.tgz"
-      dest: "/tmp/consul_template-{{ consul_template_version }}.linux-{{ go_arch }}.tar.gz"
+      url: "https://releases.hashicorp.com/consul-template/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_{{ go_arch }}.zip"
+      dest: "/tmp/consul_template-{{ consul_template_version }}.linux-{{ go_arch }}.zip"
       checksum: "sha256:{{ consul_template_checksum }}"
     environment: "{{ proxy_env }}"
     register: _download_archive
@@ -116,7 +116,7 @@
 
   - name: unpack binaries
     unarchive:
-      src: "/tmp/consul_template-{{ consul_template_version }}.linux-{{ go_arch }}.tar.gz"
+      src: "/tmp/consul_template-{{ consul_template_version }}.linux-{{ go_arch }}.zip"
       dest: "/tmp"
     delegate_to: localhost
     check_mode: false
