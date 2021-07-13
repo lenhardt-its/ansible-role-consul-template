@@ -1,0 +1,18 @@
+{% raw %}
+[
+{{- range $index, $service := service "{% endraw %}{{ item.name }}{% raw %}" "any" }}
+{{- if gt $index 0}},{{ end }}
+  {
+    "targets": ["{{.Address}}:{{.Port}}"],
+    "labels": {
+      "hostname" : "{{.Address}}",
+      "port" : "{{.Port}}",
+      {{- range $key, $value := .ServiceMeta }}
+      "{{ $key}}": "{{ $value }}",
+      {{- end }}      
+      "job": "{{.Name| replaceAll "monitoring-" "" }}"
+    }
+  }
+{{- end}}
+]
+{% endraw %}

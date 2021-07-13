@@ -25,7 +25,6 @@ This role depens on ansible-role-prometheus
 ## Requirements
 
 - Ansible >= 2.9 (It might work on previous versions, but we cannot guarantee it)
-- Community Packages: `ansible-galaxy collection install community.general`
 
 ## Role Variables
 
@@ -38,7 +37,6 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `consul_template_config_dir` | /etc/consul_template | Config Path |
 | `consul_template_template_dir` | "{{ consul_template_config_dir }}/templates" | Template store path |
 | `consul_template_config_file` | config.hcl | Config file name |
-| `consul_template_allow_firewall` | false | Allow access on firewalld port |
 | `consul_template_binary_install_dir` | "/usr/local/bin" | Base binary path |
 | `consul_template_system_user` | consul | User for Consul Template |
 | `consul_template_system_group` | prometheus | Group for Consul Template |
@@ -51,7 +49,7 @@ All variables which can be overridden are stored in [defaults/main.yml](defaults
 | `consul_template_config_telemetry` | {} | Configure telemetry options |
 | `consul_template_config_exec` | {} | Configure exec options |
 | `consul_template_config_syslog` | {} | Configure syslog options |
-| `consul_template_templates_config` | {} | Configure prometheus file_sd templates |
+| `consul_template_templates_config_node` | {} | Configure prometheus file_sd templates |
 
 ## Example
 

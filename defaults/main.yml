@@ -1,15 +1,14 @@
 ---
 proxy_env: {}
-consul_template_version: 0.25.2
+consul_template_version: 0.26.0
 consul_template_config_dir: /etc/consul_template
 consul_template_template_dir: "{{ consul_template_config_dir }}/templates"
 consul_template_output_dir: "/etc/prometheus/file_sd"
 consul_template_config_file: config.hcl
-consul_template_allow_firewall: false
 consul_template_binary_install_dir: "/usr/local/bin"
 # Run consul-template as prometheus user to write output to prometheus file_sd folder
-consul_template_system_user: "{{ consul_template_user | default('prometheus') }}"
-consul_template_system_group: "{{ consul_template_group | default('prometheus') }}"
+consul_template_system_user: "{{ consul_template_user | default('consul_template') }}"
+consul_template_system_group: "{{ consul_template_group | default('consul_template') }}"
 consul_template_web_listen_port: 8888
 
 consul_template_config_consul: {}
@@ -65,16 +64,44 @@ consul_template_config_syslog: {}
 #  enabled: true
 #  facility: 'LOCAL5'
 
-consul_template_templates_config: {}
-#  - monitoring-node-exporter:
+consul_template_templates_config_node: {}
+#  - name: monitoring-blackbox_exporter
+#    source: "{{ consul_template_template_dir }}/blackbox_exporter.ctmpl"
+#    destination: "/etc/prometheus/file_sd/blackbox_exporter.json"
+#    create_dest_dirs: true
+#    command_timeout: "60s"
+#    error_on_missing_key: false
+#    grafana_link: "xtkCtBkiz"
+#  - name: monitoring-snmp_exporter
+#    source: "{{ consul_template_template_dir }}/snmp_exporter.ctmpl"
+#    destination: "/etc/prometheus/file_sd/snmp_exporter.json"
+#    create_dest_dirs: true
+#    command_timeout: "60s"
+#    error_on_missing_key: false
+#  - name: monitoring-node_exporter
 #    source: "{{ consul_template_template_dir }}/node_exporter.ctmpl"
-#    destination: "{{ consul_template_output_dir }}/node_exporter.json"
+#    destination: "/etc/prometheus/file_sd/node_exporter.json"
 #    create_dest_dirs: true
 #    command_timeout: "60s"
 #    error_on_missing_key: false
-#  - monitoring-prometheus:
+#    grafana_link: "0L0vn4Zgz"
+#  - name: monitoring-windows_exporter
+#    source: "{{ consul_template_template_dir }}/windows_exporter.ctmpl"
+#    destination: "/etc/prometheus/file_sd/windows_exporter.json"
+#    create_dest_dirs: true
+#    command_timeout: "60s"
+#    error_on_missing_key: false
+#    grafana_link: "LjKAE2BZz"
+#  - name: monitoring-alertmanager
+#    source: "{{ consul_template_template_dir }}/alertmanager.ctmpl"
+#    destination: "/etc/prometheus/file_sd/alertmanager.json"
+#    create_dest_dirs: true
+#    command_timeout: "60s"
+#    error_on_missing_key: false
+#  - name: monitoring-prometheus
 #    source: "{{ consul_template_template_dir }}/prometheus.ctmpl"
-#    destination: "{{ consul_template_output_dir }}/prometheus.json"
+#    destination: "/etc/prometheus/file_sd/prometheus.json"
 #    create_dest_dirs: true
 #    command_timeout: "60s"
 #    error_on_missing_key: false
+#    grafana_link: "vw1GFwDMz"  

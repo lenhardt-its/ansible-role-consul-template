@@ -1,0 +1,25 @@
+{% raw %}
+[
+{{- range $index, $service := service "{% endraw %}{{ item.name }}{% raw %}" "any" }}
+{{- if not (eq .NodeMeta.monitoring_required "no") }}
+{{- if gt $index 0}},{{ end }}
+  {
+    "targets": ["{{.Address}}:{{.Port}}"],
+    "labels": {
+      "hostname" : "{{.Address}}",
+      "port" : "{{.Port}}",
+      {{- range $key, $value := .ServiceMeta }}
+      "{{ $key}}": "{{ $value }}",
+      {{- end }} 
+      {{- if not (eq .Node "monitoring-{% endraw %}{{ ansible_hostname }}.{{ ansible_domain }}{% raw %}")}}
+      {{- range $key, $value := .NodeMeta }}
+      {{- if and (ne $key "consul-network-segment") (ne $key "branch") }}
+      "{{ $key}}": "{{ $value }}",
+      {{- end }}{{- end }}{{- end }}{{- end }} 
+      "job": "{{.Name| replaceAll "monitoring-" "" }}"
+    }
+  }
+{{- end}}
+{{- end}}
+]
+{% endraw %}

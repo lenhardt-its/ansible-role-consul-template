@@ -223,16 +223,17 @@ exec {
 {%   endfor %}
 }
 {% endif %}
-{% if consul_template_templates_config | length > 0 %}
+{% if consul_template_templates_config_node | length > 0 %}
 # Template configuration
-{% for ctmpl in consul_template_templates_config %}
-# {{ ctmpl | first }}
+{% for ctmpl in consul_template_templates_config_node %}
+# {{ ctmpl.name }}
 template {
 {% for option, value in ctmpl.items() %}
 {%     if value is sameas true %}
   {{ option }} = true
 {%     elif value is sameas false %}
   {{ option }} = false
+{%     elif option == 'name' %}
 {%     elif value is string %}
   {{ option }} = "{{ value|string }}"
 {%     elif value is number %}
@@ -240,6 +241,5 @@ template {
 {%     endif %}
 {%   endfor %}
 }
-
 {% endfor %}
 {% endif %}
